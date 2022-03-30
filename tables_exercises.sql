@@ -17,7 +17,8 @@ SELECT * FROM information_schema.columns WHERE table_schema = 'employees';
 select * from employees;
 select * from departments;
 
--- They don't share data but presumably every employee works within a specific department.
+-- They don't share data but presumably every employee works within a specific department, 
+-- which is in the dept_emp table.
 
 show create table dept_manager;
 /* 'CREATE TABLE `dept_manager` (
