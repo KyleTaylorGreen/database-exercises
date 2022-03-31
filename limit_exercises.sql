@@ -50,13 +50,13 @@ FROM employees
 WHERE birth_date LIKE '____-12-25'
   AND hire_date BETWEEN '1990-01-01' AND '1999-12-31'
 ORDER BY hire_date
-LIMIT 5 OFFSET 50;
+LIMIT 5 OFFSET 45;
 /* Answers: 
       - Names:
-			  Christophe Baca
-              Moie Birsak
-              Chikako Ibel
-              Shounak Jansen
-              Zhigen Boissier
-	  - Offset = page number * LIMIT
+			  Pranay Narwekar
+              Marjo Farrow
+              Ennio Karcich
+              Dines Lubachevsky
+              Ipke Fontan
+	  - Offset = (page number - 1) * LIMIT
 */
