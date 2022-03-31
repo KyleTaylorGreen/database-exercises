@@ -10,7 +10,7 @@ FROM employees
 WHERE first_name IN ('Irena', 'Vidya', 'Maya');
 
 # actually counting results
-SELECT COUNT(first_name)
+SELECT COUNT(*)
 FROM employees
 WHERE first_name IN ('Irena', 'Vidya', 'Maya');
 # Answer - this is the format for the whole document.
@@ -27,7 +27,7 @@ WHERE first_name = 'Irena'
 OR  first_name = 'Vidya'
 OR first_name = 'Maya';
 
-SELECT COUNT(first_name)
+SELECT COUNT(*)
 FROM employees
 WHERE first_name = 'Irena'
 OR  first_name = 'Vidya'
@@ -48,7 +48,7 @@ WHERE gender = 'M'
     OR  first_name = 'Maya'
 );
 
-SELECT COUNT(first_name)
+SELECT COUNT(*)
 FROM employees
 WHERE gender = 'M'
 	AND (
@@ -67,7 +67,7 @@ SELECT emp_no, first_name, last_name
 FROM employees
 WHERE last_name LIKE 'E%';
 
-SELECT COUNT(last_name)
+SELECT COUNT(*)
 FROM employees
 WHERE last_name LIKE 'E%';
 # 7330 people have last names that start with 'E'.
@@ -83,13 +83,13 @@ FROM employees
 WHERE last_name LIKE 'E%'
   OR last_name LIKE '%e';
 
-SELECT COUNT(last_name)
+SELECT COUNT(*)
 FROM employees
 WHERE last_name LIKE 'E%'
   OR last_name LIKE '%e';
 # 30723 peoples' last names start or end with 'E'.
 
-SELECT COUNT(last_name)
+SELECT COUNT(*)
 FROM employees
 WHERE last_name LIKE '%e'
   AND last_name NOT LIKE 'E%';
@@ -107,7 +107,7 @@ FROM employees
 WHERE last_name LIKE 'E%'
   AND last_name LIKE '%e';
   
-SELECT COUNT(last_name)
+SELECT COUNT(*)
 FROM employees
 WHERE last_name LIKE 'E%'
   AND last_name LIKE '%e';
