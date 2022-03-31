@@ -122,8 +122,18 @@ SELECT COUNT(*)
 FROM employees
 WHERE last_name LIKE 'E%'
   AND last_name LIKE '%e';
-# 899 people have a last name that starts and ends with 'E'
+# 899 people have a last name that starts and ends with 'E'. 
 
+# Finding employees whose last name ends with 'E'
+SELECT emp_no, first_name, last_name
+FROM employees
+WHERE last_name LIKE "%e";
+
+# Counting based on above query
+SELECT COUNT(*)
+FROM employees
+WHERE last_name LIKE "%e";
+# 24292 people have a last name that ends with 'e'
 
 /**************************** Question 8 ********************************************/
 # Find all current or previous employees hired in the 90s. Enter a comment with the 
