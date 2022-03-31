@@ -8,6 +8,17 @@ SELECT DISTINCT last_name
 FROM employees
 ORDER BY last_name DESC
 LIMIT 10;
+# Names: 
+# Zykh
+# Zyda
+# Zwicker
+# Zweizig
+# Zumaque
+# Zultner
+# Zucker
+# Zuberek
+# Zschoche
+# Zongker
 
 
 /************************************** Question 3 ****************************************/
