@@ -82,10 +82,22 @@ SELECT CONCAT(SUBSTR(LOWER(first_name), 1, 1),
        SUBSTR(birth_date, 3, 2)) AS username,
        COUNT(*)
 FROM employees
-GROUP BY username WITH ROLLUP
+GROUP BY username
 HAVING COUNT(*) >= 2;
+
+SELECT SUM(total)
+FROM ( SELECT CONCAT(SUBSTR(LOWER(first_name), 1, 1), 
+	   SUBSTR(LOWER(last_name), 1, 4), 
+       '_', 
+       SUBSTR(birth_date, 6, 2), 
+       SUBSTR(birth_date, 3, 2)) AS username,
+       COUNT(*) AS total
+	   FROM employees
+       GROUP BY username
+       HAVING total >= 2
+) AS total_count;
 # Answer 1: There are duplicate usernames.
-# Total before adjustment: 300024
+# Total before adjustment: 27403
 
 
 # Counting amount of usernames that have duplicates
@@ -100,14 +112,14 @@ FROM employees
 GROUP BY username
 HAVING COUNT(*) >= 2) AS Total_Rows;
 # 13251 usernames that have duplicates
-# 286772 total duplicates
+# 14152 total duplicates (assuming the original username is not counted as duplicate)
 
 
 /************************************* Question 9 *******************************************/
 # a) Determine the historic average salary for each employee. When you hear, read, or think
 #    "for each" with regard to SQL, you'll probably be grouping by that exact column.
 
-SELECT emp_no, FORMAT(AVG(salary), 2) AS AverageSalary
+SELECT emp_no, ROUND(AVG(salary), 2) AS AverageSalary
 FROM salaries
 GROUP BY emp_no;
 
@@ -149,7 +161,7 @@ GROUP BY emp_no;
 
 # f) Find the standard deviation of salaries for each employee.
 
-SELECT emp_no, FORMAT(STDDEV(salary), 2) AS StdDevOfSalary
+SELECT emp_no, ROUND(STDDEV(salary), 2) AS StdDevOfSalary
 FROM salaries
 GROUP BY emp_no;
 

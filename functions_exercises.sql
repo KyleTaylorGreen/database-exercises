@@ -15,7 +15,7 @@ WHERE last_name LIKE '%e'
 # Convert the names produced in your last query to all uppercase.
 
 # Answer:
-SELECT CONCAT(UPPER(first_name), ' ', UPPER(last_name)) AS full_name
+SELECT UPPER(CONCAT(first_name, ' ', last_name)) AS full_name
 FROM employees
 WHERE last_name LIKE '%e'
 	AND last_name LIKE 'E%';
@@ -37,7 +37,8 @@ WHERE birth_date LIKE '____-12-25'
 # Find the smallest and largest current salary from the salaries table.
 
 SELECT MIN(salary), MAX(salary)
-FROM salaries;
+FROM salaries
+WHERE to_date > NOW();
 # Min salary: $38623
 # Max salary: $158220
 
@@ -51,11 +52,11 @@ FROM salaries;
 
 # Answer
 # Making usernames in format xxxxx_#### based on above requirements
-SELECT CONCAT(SUBSTR(LOWER(first_name), 1, 1), 
-	   SUBSTR(LOWER(last_name), 1, 4), 
+SELECT LOWER(CONCAT(SUBSTR(first_name, 1, 1), 
+	   SUBSTR(last_name, 1, 4), 
        '_', 
        SUBSTR(birth_date, 6, 2), 
-       SUBSTR(birth_date, 3, 2)) AS username, 
+       SUBSTR(birth_date, 3, 2))) AS username, 
        first_name, 
        last_name, 
        birth_date
