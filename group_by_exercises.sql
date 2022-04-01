@@ -104,3 +104,69 @@ HAVING COUNT(*) >= 2) AS Total_Rows;
 
 
 /************************************* Question 9 *******************************************/
+# a) Determine the historic average salary for each employee. When you hear, read, or think
+#    "for each" with regard to SQL, you'll probably be grouping by that exact column.
+
+SELECT emp_no, FORMAT(AVG(salary), 2) AS AverageSalary
+FROM salaries
+GROUP BY emp_no;
+
+
+# b) Using the dept_emp table, count how many current employees work in each
+# department. The query result should show 9 rows, one for each department and 
+# the employee count.
+
+SELECT dept_no, COUNT(dept_no)
+FROM dept_emp
+GROUP BY dept_no;
+# Answer:
+# d001: 20211    d002: 17346   d003: 17786
+# d004: 73485    d005: 85707   d006: 20117
+# d007: 52245    d008: 21126   d009: 23580
+
+
+# c) Determine how many different salaries each employee has had. This includes
+# both historic and current.
+
+SELECT emp_no, COUNT(salary) AS DifferentSalaries
+FROM salaries
+GROUP BY emp_no;
+
+
+# d) Find the maximum salary for each employee.
+
+SELECT emp_no, MAX(salary) AS MaxSalary
+FROM salaries
+GROUP BY emp_no;
+
+
+# e) Find the minimum salary for each employee.
+
+SELECT emp_no, MIN(salary) AS MinSalary
+FROM salaries
+GROUP BY emp_no;
+
+
+# f) Find the standard deviation of salaries for each employee.
+
+SELECT emp_no, FORMAT(STDDEV(salary), 2) AS StdDevOfSalary
+FROM salaries
+GROUP BY emp_no;
+
+
+# g) Now find the max salary for each employee where that 
+# max salary is greater than $150,000.
+
+SELECT emp_no, MAX(salary) AS MaxSalary
+FROM salaries
+GROUP BY emp_no
+HAVING MaxSalary > 150000;
+
+
+# h) Find the average salary for each employee where 
+# that average salary is between $80k and $90k.
+
+SELECT emp_no, ROUND(AVG(salary), 2) AS AverageSalary
+FROM salaries
+GROUP BY emp_no
+Having AverageSalary BETWEEN 80000 AND 90000;
