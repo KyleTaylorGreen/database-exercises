@@ -120,10 +120,78 @@ ORDER BY dept_emp.dept_no;
 
 # 7) Which department has the highest average salary? Hint: Use current not historic information.
 
-SELECT departments.dept_name, AVG(salary)
+SELECT departments.dept_name, ROUND(AVG(salary), 2) AS AvgSalary
 FROM salaries
 JOIN dept_emp
   ON salaries.emp_no = dept_emp.emp_no
 JOIN departments
   ON dept_emp.dept_no = departments.dept_no
-GROUP BY departments.dept_name;
+WHERE dept_emp.to_date > NOW()
+  AND salaries.to_date > NOW()
+GROUP BY departments.dept_name
+ORDER BY AvgSalary DESC
+LIMIT 1;
+
+
+# 8) Who is the highest paid employee in the Marketing department?
+
+SELECT employees.first_name, employees.last_name
+FROM employees
+JOIN salaries
+  ON employees.emp_no = salaries.emp_no
+JOIN dept_emp
+  ON employees.emp_no = dept_emp.emp_no
+JOIN departments
+  ON dept_emp.dept_no = departments.dept_no
+WHERE departments.dept_name = 'Marketing'
+  AND dept_emp.to_date > NOW()
+ORDER BY salaries.salary DESC
+LIMIT 1;
+
+
+# 9) Which current department manager has the highest salary?
+
+SELECT employees.first_name, employees.last_name, salaries.salary, departments.dept_name
+FROM employees
+JOIN salaries
+  ON employees.emp_no = salaries.emp_no
+JOIN dept_manager
+  ON employees.emp_no = dept_manager.emp_no
+JOIN departments
+  ON dept_manager.dept_no = departments.dept_no
+WHERE dept_manager.to_date > NOW()
+ORDER BY salaries.salary DESC
+LIMIT 1;
+
+
+# 10) Determine the average salary for each department. Use all salary information and round your results.
+
+SELECT departments.dept_name, AVG(salaries.salary) AS AvgSalary
+FROM salaries
+JOIN employees
+  ON salaries.emp_no = employees.emp_no
+JOIN dept_emp
+  ON salaries.emp_no = dept_emp.emp_no
+JOIN departments
+  ON dept_emp.dept_no = departments.dept_no
+GROUP BY departments.dept_name
+ORDER BY AvgSalary DESC; 
+
+
+# 11) Bonus Find the names of all current employees, their department name, and their current manager's name.
+SELECT CONCAT(emp.first_name, " ", emp.last_name) AS EmployeeName, departments.dept_name, CONCAT(manager.first_name, " ", manager.last_name) AS ManagerName
+FROM employees AS emp
+JOIN dept_emp
+  ON emp.emp_no = dept_emp.emp_no
+JOIN departments
+  ON dept_emp.dept_no = departments.dept_no
+JOIN dept_manager
+  ON departments.dept_no = dept_manager.dept_no
+JOIN employees AS manager
+  ON dept_manager.emp_no = manager.emp_no
+WHERE dept_manager.to_date > NOW()
+  AND dept_emp.to_date > NOW()
+ORDER BY EmployeeName;
+
+# 12) Bonus Who is the highest paid employee within each department.
+
