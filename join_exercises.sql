@@ -195,3 +195,17 @@ ORDER BY EmployeeName;
 
 # 12) Bonus Who is the highest paid employee within each department.
 
+SELECT full_name, HighestSalary, Dept_name
+	FROM (SELECT CONCAT(employees.first_name, " ", employees.last_name) AS full_name, MAX(salaries.salary) OVER(PARTITION BY departments.dept_name) AS HighestSalary, departments.dept_name AS Dept_name, salaries.salary AS ActualSalary, departments.dept_name AS Verify
+	FROM employees
+	JOIN dept_emp
+	  ON employees.emp_no = dept_emp.emp_no
+	JOIN salaries
+	  ON employees.emp_no = salaries.emp_no
+	JOIN departments
+	  ON dept_emp.dept_no = departments.dept_no
+	WHERE salaries.to_date > NOW()
+	  AND salaries.emp_no = employees.emp_no
+	ORDER BY HighestSalary) AS subTable
+WHERE HighestSalary = ActualSalary
+  AND Dept_name = Verify;
