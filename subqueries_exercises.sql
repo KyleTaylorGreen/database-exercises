@@ -4,7 +4,9 @@ USE employees;
 
 SELECT employees.first_name, employees.last_name, employees.hire_date
 FROM employees
-WHERE employees.hire_date = (
+JOIN dept_emp using(emp_no)
+WHERE to_date > now()
+AND employees.hire_date = (
 	SELECT employees.hire_date
 	FROM employees
 	WHERE employees.emp_no = 101010
@@ -81,26 +83,47 @@ WHERE employees.emp_no IN (
 
 SELECT employees.first_name, employees.last_name, salaries.salary AS CurrentSalary
 FROM employees
-JOIN salaries
-  ON salaries.emp_no = employees.emp_no
-WHERE salaries.salary > (
+JOIN salaries USING(emp_no)
+WHERE salary > (
 						 SELECT AVG(salaries.salary)
                          FROM salaries
                          )
 AND salaries.to_date > NOW();
 
 # 6) How many current salaries are within 1 standard deviation of the current highest salary? 
-#    (Hint: you can use a built in function to calculate the standard deviation.) What percentage of all salaries is this?
+#    (Hint: you can use a built in function to calculate the standard deviation.) What percentage of all salaries 
+#    is this?
 
+SELECT COUNT(IF(zscore > (MaxZscore - 1), zscore, NULL)) AS Within1StdDev,
+	   COUNT(IF(zscore > (MaxZscore - 1), zscore, NULL))/ COUNT(*) * 100
+FROM(
+	SELECT zscore, MAX(zscore) OVER() AS MaxZscore
+	FROM(
+		SELECT  employees.first_name, employees.last_name, salaries.salary,
+		(salary - (SELECT AVG(salary) FROM salaries WHERE salaries.to_date > NOW()))
+		/
+		(SELECT stddev(salary) FROM salaries WHERE salaries.to_date > NOW()) AS zscore
+		FROM employees
+		JOIN salaries
+		  ON salaries.emp_no = employees.emp_no
+		WHERE salaries.to_date > NOW()
+		GROUP BY employees.first_name, employees.last_name, salaries.salary, zscore
+		ORDER BY zscore DESC
+	)AS zscoresTable
+)AS MaxScores;
 
-SELECT employees.first_name, employees.last_name, salaries.salary
+SELECT zscore, MAX(zscore) OVER() AS MaxZscore
+FROM(
+SELECT  employees.first_name, employees.last_name, salaries.salary,
     (salary - (SELECT AVG(salary) FROM salaries WHERE salaries.to_date > NOW()))
     /
-    (SELECT stddev(salary) FROM salaries WHERE salaries.to_date > NOW()) AS zscore
+    (SELECT stddev(salary) FROM salaries WHERE salaries.to_date > NOW()) AS zscore,
+    ROW_NUMBER() OVER()
 FROM employees
 JOIN salaries
   ON salaries.emp_no = employees.emp_no
   WHERE salaries.to_date > NOW()
-Group BY employees.first_name, employees.last_name;
+GROUP BY employees.first_name, employees.last_name, salaries.salary, zscore
+ORDER BY zscore DESC
 
-                         
+)AS zscoresTable
