@@ -4,6 +4,7 @@ USE employees;
 -- Specify the db where you have permissions and add the temp table name.
 -- Replace "my_database_with_permissions"" with the database name where you have appropriate permissions. 
 #  It should match your username.
+
 CREATE TEMPORARY TABLE jemison_1739.employees_with_departments AS 
 SELECT * FROM employees JOIN dept_emp USING(emp_no);
 
@@ -77,5 +78,4 @@ SELECT (AvgSalary - (SELECT AVG(salary) FROM employees.salaries)) /
 		salaries_in_departments.dept_name
 FROM salaries_in_departments
 GROUP BY AvgSalary, salaries_in_departments.dept_name
-ORDER BY zscore DESC
-LIMIT 1;
+ORDER BY zscore DESC;
