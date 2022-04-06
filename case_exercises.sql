@@ -81,5 +81,5 @@ SELECT CASE
 FROM departments
 JOIN dept_emp USING(dept_no)
 JOIN salaries USING(emp_no)
-  WHERE salaries.to_date > NOW()
+  WHERE salaries.to_date > NOW() AND dept_emp.to_date > NOW()
 GROUP BY dept_group;
