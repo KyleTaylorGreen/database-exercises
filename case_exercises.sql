@@ -9,13 +9,16 @@ WITH temp AS(
 SELECT emp_no, first_name, last_name, dept_emp.dept_no, dept_emp.from_date, dept_emp.to_date, 
 	   CASE 
        WHEN dept_emp.to_date > NOW() THEN 1
-       ELSE 0
-       END AS is_current_employee,
+		ELSE 0
+		END AS is_current_employee,
+       # Assign row number to most recent to_date, partitioned by emp_no to disregard duplicate IDs' previous department dates
        ROW_NUMBER() OVER(PARTITION BY emp_no ORDER BY dept_emp.to_date DESC) AS most_recent_date
 FROM employees
 JOIN dept_emp USING(emp_no)
 ORDER BY emp_no, dept_emp.to_date DESC)
 
+
+# Selecting employees where most_recent_date is picked for each employee
 SELECT * 
 FROM temp 
 WHERE most_recent_date = 1;
@@ -38,12 +41,12 @@ FROM employees;
 /*********************************************** Exercise 3 **********************************************************/
 # How many employees (current or previous) were born in each decade?
 
-SELECT COUNT(CASE WHEN birth_date BETWEEN '1940-01-01' AND '1949-12-31' THEN FLOOR((YEAR(birth_date)/10)) * 10 ELSE NULL END) AS "40's",
-	   COUNT(CASE WHEN birth_date BETWEEN '1950-01-01' AND '1959-12-31' THEN FLOOR((YEAR(birth_date)/10)) * 10 ELSE NULL END) AS "50's",
-	   COUNT(CASE WHEN birth_date BETWEEN '1960-01-01' AND '1969-12-31' THEN FLOOR((YEAR(birth_date)/10)) * 10 ELSE NULL END) AS "60's",
-       COUNT(CASE WHEN birth_date BETWEEN '1970-01-01' AND '1979-12-31' THEN FLOOR((YEAR(birth_date)/10)) * 10 ELSE NULL END) AS "70's",
-       COUNT(CASE WHEN birth_date BETWEEN '1980-01-01' AND '1989-12-31' THEN FLOOR((YEAR(birth_date)/10)) * 10 ELSE NULL END) AS "80's",
-       COUNT(CASE WHEN birth_date BETWEEN '1990-01-01' AND '1999-12-31' THEN FLOOR((YEAR(birth_date)/10)) * 10 ELSE NULL END) AS "90's"
+SELECT COUNT(CASE WHEN birth_date BETWEEN '1940-01-01' AND '1949-12-31' THEN "40's" ELSE NULL END) AS "40's",
+	   COUNT(CASE WHEN birth_date BETWEEN '1950-01-01' AND '1959-12-31' THEN "50's" ELSE NULL END) AS "50's",
+	   COUNT(CASE WHEN birth_date BETWEEN '1960-01-01' AND '1969-12-31' THEN "60's" ELSE NULL END) AS "60's",
+       COUNT(CASE WHEN birth_date BETWEEN '1970-01-01' AND '1979-12-31' THEN "70's" ELSE NULL END) AS "70's",
+       COUNT(CASE WHEN birth_date BETWEEN '1980-01-01' AND '1989-12-31' THEN "80's" ELSE NULL END) AS "80's",
+       COUNT(CASE WHEN birth_date BETWEEN '1990-01-01' AND '1999-12-31' THEN "90's" ELSE NULL END) AS "90's"
 FROM employees;
 
 
@@ -58,10 +61,25 @@ FROM departments;
 SELECT ROUND(AVG(CASE WHEN dept_name IN ('Research', 'Development') THEN salaries.salary ELSE NULL END), 2) AS 'Research & Development',
 	   ROUND(AVG(CASE WHEN dept_name IN ('Sales', 'Marketing') THEN salaries.salary ELSE NULL END), 2) AS 'Sales & Marketing',
 	   ROUND(AVG(CASE WHEN dept_name IN ('Production', 'Quality Management') THEN salaries.salary ELSE NULL END), 2) AS 'Production & QM',
-       ROUND(AVG(CASE WHEN dept_name IN ('Finance', 'HR') THEN salaries.salary ELSE NULL END), 2) AS 'Finance & HR',
+       ROUND(AVG(CASE WHEN dept_name IN ('Finance', 'Human Resources') THEN salaries.salary ELSE NULL END), 2) AS 'Finance & HR',
        ROUND(AVG(CASE WHEN dept_name = 'Customer Service' THEN salaries.salary ELSE NULL END), 2) AS 'Customer Service'
 FROM departments
 JOIN dept_emp USING(dept_no)
 JOIN salaries
   ON dept_emp.emp_no = salaries.emp_no 
   WHERE salaries.to_date > NOW();
+
+# better to use if I wanted to pull data or mess with the information at all
+SELECT CASE
+			WHEN dept_name IN ('Research', 'Development') THEN 'Research & Development'
+            WHEN dept_name IN ('Sales', 'Marketing') THEN 'Sales & Marketing'
+            WHEN dept_name IN ('Production', 'Quality Management') THEN 'Prod. & QM'
+            WHEN dept_name IN ( 'Finance', 'Human Resources') THEN 'Finance & HR'
+            WHEN dept_name IN ('Customer Service') THEN 'Customer Service'
+		END AS dept_group,
+        AVG(salary)
+FROM departments
+JOIN dept_emp USING(dept_no)
+JOIN salaries USING(emp_no)
+  WHERE salaries.to_date > NOW()
+GROUP BY dept_group;
